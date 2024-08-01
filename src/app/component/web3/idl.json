@@ -1,0 +1,284 @@
+{
+    "version": "0.1.0",
+    "name": "improved_voting_dao",
+    "instructions": [
+        {
+            "name": "createDao",
+            "accounts": [
+                {
+                    "name": "authority",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "dao",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "description",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "createProposal",
+            "accounts": [
+                {
+                    "name": "authority",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "dao",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
+                    "name": "description",
+                    "type": "string"
+                },
+                {
+                    "name": "options",
+                    "type": {
+                        "vec": "string"
+                    }
+                },
+                {
+                    "name": "startTime",
+                    "type": "i64"
+                },
+                {
+                    "name": "endTime",
+                    "type": "i64"
+                }
+            ]
+        },
+        {
+            "name": "castVote",
+            "accounts": [
+                {
+                    "name": "voter",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "vote",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "optionIndex",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "closeProposal",
+            "accounts": [
+                {
+                    "name": "authority",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "proposal",
+                    "isMut": true,
+                    "isSigner": false
+                }
+            ],
+            "args": []
+        }
+    ],
+    "accounts": [
+        {
+            "name": "DAO",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "authority",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "proposalCount",
+                        "type": "u64"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Proposal",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "authority",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "title",
+                        "type": "string"
+                    },
+                    {
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "startTime",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "endTime",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "options",
+                        "type": {
+                            "vec": "string"
+                        }
+                    },
+                    {
+                        "name": "voteCounts",
+                        "type": {
+                            "vec": "u64"
+                        }
+                    },
+                    {
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Vote",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "hasVoted",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "optionIndex",
+                        "type": "u8"
+                    }
+                ]
+            }
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "VotingNotStarted",
+            "msg": "Voting has not started yet"
+        },
+        {
+            "code": 6001,
+            "name": "VotingEnded",
+            "msg": "Voting has ended"
+        },
+        {
+            "code": 6002,
+            "name": "VotingNotEnded",
+            "msg": "Voting has not ended yet"
+        },
+        {
+            "code": 6003,
+            "name": "InvalidTimeRange",
+            "msg": "Invalid time range"
+        },
+        {
+            "code": 6004,
+            "name": "InsufficientOptions",
+            "msg": "Insufficient options"
+        },
+        {
+            "code": 6005,
+            "name": "InvalidOptionIndex",
+            "msg": "Invalid option index"
+        },
+        {
+            "code": 6006,
+            "name": "ProposalInactive",
+            "msg": "Proposal is inactive"
+        },
+        {
+            "code": 6007,
+            "name": "AlreadyVoted",
+            "msg": "Already voted"
+        },
+        {
+            "code": 6008,
+            "name": "NameTooLong",
+            "msg": "Name exceeds maximum length of 64 characters"
+        },
+        {
+            "code": 6009,
+            "name": "TitleTooLong",
+            "msg": "Description exceeds maximum length of 256 characters"
+        },
+        {
+            "code": 6010,
+            "name": "DescriptionTooLong",
+            "msg": "Description exceeds maximum length of 1024 characters"
+        },
+        {
+            "code": 6011,
+            "name": "TooManyOptions",
+            "msg": "Options exceed maximum length of 10"
+        }
+    ]
+}
